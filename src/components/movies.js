@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -5,18 +6,22 @@ const Movies = () => {
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
-    let moviesList = [
-      {
-        id: 1,
-        title: "Star Wars",
-        release_date: "1977-05-27",
-        runtime: 121,
-        mpaa_rating: "PG",
-        description: "I don't know",
-      },
-    ];
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
 
-    setMovies(moviesList);
+    const requestOptions = {
+      method: "GET",
+      headers: headers,
+    };
+
+    fetch(`http://localhost:8080/movies`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        setMovies(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   return (
@@ -36,9 +41,7 @@ const Movies = () => {
             {movies.map((m) => (
               <tr key={m.id}>
                 <td>
-                    <Link to={`/movies/${m.id}`}>
-                        {m.title}
-                    </Link>
+                  <Link to={`/movies/${m.id}`}>{m.title}</Link>
                 </td>
                 <td>{m.release_date}</td>
                 <td>{m.mpaa_rating}</td>
